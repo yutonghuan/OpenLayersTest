@@ -1,0 +1,2 @@
+# OpenLayersTest
+利用webgis中的开源库openlayers实现在Qt中的地图显示与交互功能

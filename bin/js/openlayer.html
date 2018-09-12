@@ -1,0 +1,65 @@
+﻿<html>
+<head>
+    <title>演示在ol3中加载本地磁盘存储的离线瓦片地图</title>
+    <link href="ol.css" rel="stylesheet" />
+    <script src="ol.js"></script>
+</head>
+
+<body>
+    <div id="map" style="width:100%; height:97%" onmousemove="mouseMoveEvent(event)"></div>
+    <div>
+      <input type="checkbox" checked="checked" onclick="checkTerrain(this.checked);" />地图  
+      <input type="checkbox" checked="checked" onclick="checkOverlay(this.checked);" />边界 
+      <span>经度：</span>
+      <span id="lon"></span>
+      <span>纬度：</span>
+      <span id="lat"></span>
+      <span>分辨率：</span>
+      <span id="resolution"></span>
+    </div>
+    <script type="text/javascript">
+
+        // 地图设置中心  坐标113.708003,34.772622为中心
+        var center = ol.proj.transform([120.30,33.75], 'EPSG:4326', 'EPSG:3857');
+
+        var terrain = new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: './terrain/{z}/{x}/{y}.jpg'//{z} {x} {y} 是占位符，ol会识别的
+            })
+        });
+
+        var overlay = new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: './overlay/{z}/{x}/{y}.png'//{z} {x} {y} 是占位符，ol会识别的
+            })
+        });
+
+        //创建地图
+        var map = new ol.Map({
+            layers: [terrain, overlay],
+            view: new ol.View({
+                center: center,
+                zoom: 4
+            }),
+            target: 'map'
+        });
+
+        function checkTerrain(elem){
+            terrain.setVisible(elem);
+        }
+
+        function checkOverlay(elem){
+            overlay.setVisible(elem);
+        }
+
+        function mouseMoveEvent(event){
+            var t = ol.proj.transform(map.getEventCoordinate(event), 'EPSG:3857', 'EPSG:4326')
+            document.getElementById("lon").innerHTML = t[0];
+            document.getElementById("lat").innerHTML = t[1];
+            document.getElementById("resolution").innerHTML = map.getView().getResolution();
+        }
+
+
+    </script>
+</body>
+</html>
